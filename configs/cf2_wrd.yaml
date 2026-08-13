@@ -1,0 +1,51 @@
+seed: 42
+device: auto
+
+data:
+  root: .
+  train_csv: data/splits/train.csv
+  val_csv: data/splits/val.csv
+  test_csv: data/splits/test.csv
+  input_size: 224
+  num_workers: 4
+
+preprocessing:
+  enabled: true
+  k: 3
+  morphology_kernel: 3
+  local_output: masked_rgb       # lesion-enhanced RGB view
+  outside_scale: 0.15           # release default; exact manuscript constant not reported
+  min_cluster_area_ratio: 0.002 # release default; exact manuscript constant not reported
+  a_weight: 0.25                # release default for a*/b* lesion-cluster scoring
+  kmeans_attempts: 3            # release default
+
+augmentation:
+  rotation_degrees: 15
+  horizontal_flip_p: 0.5        # release default; probability not reported in manuscript
+  gaussian_blur_p: 0.3          # release default; probability not reported in manuscript
+  gaussian_kernel: 3
+  brightness_delta: 0.20        # release default; magnitude not reported in manuscript
+
+model:
+  pretrained: true
+  num_classes: 2
+  global_dim: 512
+  local_dim: 1024
+  fusion_dim: 512
+  dropout: 0.25
+  correlation_threshold: 0.7
+  feature_selection_mode: fixed_parameter_sparse_mask
+  freeze_mobile_blocks: 3
+  freeze_efficient_blocks: 5
+
+training:
+  epochs: 60
+  batch_size: 64
+  lr: 0.0001
+  weight_decay: 0.01            # release default; AdamW weight decay not reported in manuscript
+  lr_step_size: 10
+  lr_gamma: 0.9
+  label_smoothing: 0.1
+  selector_batch_size: 64
+  checkpoint_dir: checkpoints
+  best_name: cf2_wrd_best.pt
